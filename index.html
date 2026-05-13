@@ -440,20 +440,13 @@
                 </div>
               </div>
 
-              <div class="flex justify-center gap-4">
+              <div class="flex justify-center">
                 <button
                   onclick="copyReviewTextAndRedirect()"
                   class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 flex items-center justify-center"
                 >
                   <i data-lucide="copy" class="w-5 h-5 mr-2"></i>
                   Copy Review Text
-                </button>
-                <button
-                  onclick="copyAndOpenGoogleMaps()"
-                  class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200 flex items-center justify-center"
-                >
-                  <i data-lucide="map-pin" class="w-5 h-5 mr-2"></i>
-                  Copy & Open Location
                 </button>
               </div>
 
@@ -658,32 +651,6 @@
           }
         } else {
           showMessage("No Google My Business link available", "error");
-        }
-      }, 500);
-    }
-
-    async function copyAndOpenGoogleMaps() {
-      const googleMapsLink = "https://www.google.com/maps/place/ISHA+Technology+Solution+Pvt+Ltd/@28.6131126,77.3864524,17z/data=!4m8!3m7!1s0x390d05292b63db97:0x70d034117a4338f3!8m2!3d28.6131126!4d77.3864524!9m1!1b1!16s%2Fg%2F1ptz6hxsj?entry=ttu&g_ep=EgoyMDI2MDUxMC4wIKXMDSoASAFQAw%3D%3D";
-      
-      try {
-        await navigator.clipboard.writeText(googleMapsLink);
-        showMessage("Location link copied to clipboard!", "success");
-      } catch (error) {
-        const textArea = document.createElement("textarea");
-        textArea.value = googleMapsLink;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-        showMessage("Location link copied to clipboard!", "success");
-      }
-
-      // Open the Google Maps link in a new window
-      setTimeout(() => {
-        const newWindow = window.open(googleMapsLink, "_blank", "noopener,noreferrer");
-        if (newWindow) {
-          newWindow.blur();
-          window.focus();
         }
       }, 500);
     }
