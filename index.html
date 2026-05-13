@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Review System - Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-color: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --secondary-color: #64748b;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --dark-bg: #0f172a;
+      --dark-sidebar: #020617;
+      --sidebar-accent: #1e1b4b;
+      --light-bg: #f8fafc;
+      --border-color: #e2e8f0;
+      --card-bg: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+    }
+
+    .sidebar-gradient {
+      background: linear-gradient(180deg, var(--dark-sidebar) 0%, var(--sidebar-accent) 50%, var(--dark-sidebar) 100%);
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-shadow {
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .card-shadow-lg {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      transition: all 0.3s ease;
+      border: none;
+      font-weight: 600;
+      letter-spacing: 0.025em;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-color);
+      font-weight: 600;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+    }
+
+    .sidebar-link {
+      transition: all 0.3s ease;
+      border-radius: 12px;
+      margin: 0 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar-link::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .sidebar-link:hover::before {
+      left: 100%;
+    }
+
+    .sidebar-link:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(6px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-link.active {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, var(--card-bg) 0%, #f8fafc 100%);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .crm-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .crm-card:hover {
+      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .form-input {
+      transition: all 0.3s ease;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 14px;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .form-select {
+      transition: all 0.3s ease;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 14px;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 12px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 40px;
+    }
+
+    .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .sidebar-scroll {
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(99, 102, 241, 0.5) transparent;
+      max-height: calc(100vh - 200px);
+    }
+
+    .sidebar-scroll::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .sidebar-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    .sidebar-scroll::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.6) 0%, rgba(99, 102, 241, 0.8) 100%);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.8) 0%, rgba(99, 102, 241, 1) 100%);
+      transform: scale(1.1);
+    }
+
+    .desktop-sidebar {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: relative;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 20px;
+      margin-bottom: 120px;
+    }
+
+    .login-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .table-modern {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-modern thead {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      color: white;
+    }
+
+    .table-modern th {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 12px;
+    }
+
+    .table-modern tbody tr {
+      transition: all 0.2s ease;
+    }
+
+    .table-modern tbody tr:hover {
+      background: rgba(99, 102, 241, 0.05);
+      transform: scale(1.01);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      color: white;
+    }
+
+    .badge-success {
+      background: linear-gradient(135deg, var(--success-color), #34d399);
+      color: white;
+    }
+
+    .badge-warning {
+      background: linear-gradient(135deg, var(--warning-color), #fbbf24);
+      color: white;
+    }
+
+    .badge-danger {
+      background: linear-gradient(135deg, var(--danger-color), #f87171);
+      color: white;
+    }
+
+    .loading-spinner {
+      border: 3px solid #f3f4f6;
+      border-top: 3px solid var(--primary-color);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .slide-in {
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(-20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .mobile-nav {
+      display: none;
+    }
+
+    .mobile-nav.active {
+      display: block;
+    }
+
+    .mobile-overlay {
+      display: none;
+    }
+
+    .mobile-overlay.active {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .desktop-sidebar {
+        display: none;
+      }
+
+      .mobile-nav {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .responsive-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .responsive-flex {
+        flex-direction: column;
+      }
+
+      .responsive-text {
+        font-size: 1rem;
+      }
+
+      .responsive-padding {
+        padding: 1rem;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .responsive-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .responsive-flex {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (min-width: 1025px) {
+      .responsive-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen bg-gray-50">
+    <div class="w-full">
+      <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">Business Reviews</h2>
+            <p class="text-gray-600 mt-1">
+              Manage reviews for <span id="businessName" class="font-semibold">Loading...</span>
+            </p>
+          </div>
+          <div class="flex items-center space-x-4"></div>
+        </div>
+      </header>
+
+      <div class="p-8">
+        <div id="reviewDisplay" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">
+          <div class="text-center">
+            <div id="loadingState" class="py-12">
+              <i data-lucide="loader-2" class="w-12 h-12 text-gray-400 mx-auto mb-4 animate-spin"></i>
+              <p class="text-gray-500">Loading reviews...</p>
+            </div>
+
+            <div id="noReviewsState" class="hidden py-12">
+              <p class="text-gray-500">No incomplete reviews remaining for this business.</p>
+            </div>
+
+            <div id="reviewContent" class="hidden">
+              <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Current Review</h3>
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                  <p id="reviewText" class="text-gray-900 text-lg leading-relaxed"></p>
+                </div>
+              </div>
+
+              <div class="flex justify-center gap-4">
+                <button
+                  onclick="copyReviewTextAndRedirect()"
+                  class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 flex items-center justify-center"
+                >
+                  <i data-lucide="copy" class="w-5 h-5 mr-2"></i>
+                  Copy Review Text
+                </button>
+                <button
+                  onclick="copyAndOpenGoogleMaps()"
+                  class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200 flex items-center justify-center"
+                >
+                  <i data-lucide="map-pin" class="w-5 h-5 mr-2"></i>
+                  Copy & Open Location
+                </button>
+              </div>
+
+              <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">
+                  <span id="totalIncompleteCount">0</span> remaining reviews
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const businessId = urlParams.get("businessId") || "BUS-1772092209";
+    // Set these to enable live Google Places data:
+    // window.GOOGLE_MAPS_API_KEY = "YOUR_API_KEY";
+    // window.GOOGLE_PLACE_ID = "ChIJxxxxxxxxxxxxxxxx";
+    const GOOGLE_MAPS_API_KEY = window.GOOGLE_MAPS_API_KEY || "";
+    const GOOGLE_PLACE_ID = window.GOOGLE_PLACE_ID || "ChIJl9tjKykFDTkR8zhDehE00HA";
+
+    let currentReviewIndex = 0;
+    let incompleteReviews = [];
+    let businessData = null;
+    let gmbLinkUrl = null;
+    let writeReviewUrl = null;
+
+    async function loadGoogleMapsScript(apiKey) {
+      if (!apiKey) throw new Error("Missing Google Maps API key");
+      if (window.google && window.google.maps && window.google.maps.importLibrary) return;
+
+      await new Promise((resolve, reject) => {
+        const existingScript = document.querySelector('script[data-google-maps-loader="true"]');
+        if (existingScript) {
+          existingScript.addEventListener("load", resolve, { once: true });
+          existingScript.addEventListener("error", () => reject(new Error("Failed to load Google Maps script")), {
+            once: true,
+          });
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&v=beta`;
+        script.async = true;
+        script.defer = true;
+        script.dataset.googleMapsLoader = "true";
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("Failed to load Google Maps script"));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function fetchBusinessDataFromGooglePlaces() {
+      const placeId = GOOGLE_PLACE_ID || (businessData && businessData.GooglePlaceId) || "";
+      if (!GOOGLE_MAPS_API_KEY || !placeId) {
+        throw new Error("Google Places config missing");
+      }
+
+      await loadGoogleMapsScript(GOOGLE_MAPS_API_KEY);
+      const [{ Place }] = await Promise.all([google.maps.importLibrary("places")]);
+
+      const place = new Place({ id: placeId });
+      await place.fetchFields({
+        fields: ["displayName", "formattedAddress", "reviews", "googleMapsURI"],
+      });
+
+      const reviews = (place.reviews || []).map((review, idx) => ({
+        Status: "Pending",
+        Description: review.text || `Google review ${idx + 1}`,
+        Rating: review.rating || null,
+        Author: review.authorAttribution?.displayName || "",
+        AuthorUri: review.authorAttribution?.uri || "",
+      }));
+
+      return {
+        BusinessId: businessId,
+        BusinessName: place.displayName || "Unknown Business",
+        GoogleMyBusinessLink:
+          `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}` ||
+          place.googleMapsURI ||
+          null,
+        Review: reviews,
+      };
+    }
+
+    async function fetchBusinessDataFromRemoteApi() {
+      const response = await fetch(`api/businesses.php?action=getById&BusinessId=${encodeURIComponent(businessId)}`);
+      if (!response.ok) throw new Error(`Remote API returned ${response.status}`);
+      return await response.json();
+    }
+
+    async function fetchBusinessDataFromMock() {
+      const response = await fetch("mock/business.json", { cache: "no-store" });
+      if (!response.ok) throw new Error(`Mock data missing (HTTP ${response.status})`);
+      const data = await response.json();
+      // If mock contains multiple businesses, pick matching; else treat as the single business
+      if (Array.isArray(data)) return data.find((b) => (b.BusinessId || b.BusinessID) === businessId) || data[0];
+      return data;
+    }
+
+    async function loadBusinessData() {
+      try {
+        // Preferred source: Google Places API (if configured)
+        try {
+          businessData = await fetchBusinessDataFromGooglePlaces();
+        } catch (_) {
+          // Try real backend (for people hosting this with a PHP API)
+          try {
+            businessData = await fetchBusinessDataFromRemoteApi();
+          } catch (_) {
+            // Fallback to local mock so the replica works offline
+            businessData = await fetchBusinessDataFromMock();
+          }
+        }
+
+        if (!businessData) {
+          showError("Business not found");
+          return;
+        }
+
+        document.getElementById("businessName").textContent =
+          businessData.BusinessName || businessData.Name || "Unknown Business";
+
+        gmbLinkUrl = businessData.GoogleMyBusinessLink || businessData.GoogleReviewLink || null;
+        const placeIdFromData = businessData.GooglePlaceId || GOOGLE_PLACE_ID || "";
+        writeReviewUrl =
+          businessData.GoogleWriteReviewLink ||
+          (placeIdFromData
+            ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeIdFromData)}`
+            : null);
+
+        incompleteReviews = (businessData.Review || []).filter((review) => review.Status === "Pending");
+
+        loadCurrentReview();
+      } catch (error) {
+        console.error("Error loading business data:", error);
+        showError("Error loading business data");
+      }
+    }
+
+    function loadCurrentReview() {
+      const loadingState = document.getElementById("loadingState");
+      const noReviewsState = document.getElementById("noReviewsState");
+      const reviewContent = document.getElementById("reviewContent");
+
+      if (incompleteReviews.length === 0) {
+        loadingState.classList.add("hidden");
+        noReviewsState.classList.remove("hidden");
+        reviewContent.classList.add("hidden");
+        return;
+      }
+
+      if (currentReviewIndex >= incompleteReviews.length) currentReviewIndex = 0;
+
+      const currentReview = incompleteReviews[currentReviewIndex];
+
+      document.getElementById("reviewText").textContent = currentReview.Description || "";
+      document.getElementById("totalIncompleteCount").textContent = String(incompleteReviews.length);
+
+      loadingState.classList.add("hidden");
+      noReviewsState.classList.add("hidden");
+      reviewContent.classList.remove("hidden");
+    }
+
+    async function copyReviewTextAndRedirect() {
+      const reviewText = document.getElementById("reviewText").textContent;
+      const currentReview = incompleteReviews[currentReviewIndex];
+
+      try {
+        await navigator.clipboard.writeText(reviewText);
+        showMessage("Review text copied to clipboard!", "success");
+      } catch (error) {
+        const textArea = document.createElement("textarea");
+        textArea.value = reviewText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+        showMessage("Review text copied to clipboard!", "success");
+      }
+
+      // Replica behavior (offline): mark locally as complete so UI updates
+      if (currentReview) currentReview.Status = "Complete";
+      incompleteReviews = (businessData.Review || []).filter((review) => review.Status === "Pending");
+      currentReviewIndex = 0;
+      loadCurrentReview();
+
+      setTimeout(() => {
+        const targetUrl = writeReviewUrl || gmbLinkUrl;
+        if (targetUrl) {
+          const newWindow = window.open(targetUrl, "_blank", "noopener,noreferrer");
+          // Best-effort attempt to keep current page focused (browser may ignore).
+          if (newWindow) {
+            newWindow.blur();
+            window.focus();
+          }
+        } else {
+          showMessage("No Google My Business link available", "error");
+        }
+      }, 500);
+    }
+
+    async function copyAndOpenGoogleMaps() {
+      const googleMapsLink = "https://www.google.com/maps/place/ISHA+Technology+Solution+Pvt+Ltd/@28.6131126,77.3864524,17z/data=!4m8!3m7!1s0x390d05292b63db97:0x70d034117a4338f3!8m2!3d28.6131126!4d77.3864524!9m1!1b1!16s%2Fg%2F1ptz6hxsj?entry=ttu&g_ep=EgoyMDI2MDUxMC4wIKXMDSoASAFQAw%3D%3D";
+      
+      try {
+        await navigator.clipboard.writeText(googleMapsLink);
+        showMessage("Location link copied to clipboard!", "success");
+      } catch (error) {
+        const textArea = document.createElement("textarea");
+        textArea.value = googleMapsLink;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+        showMessage("Location link copied to clipboard!", "success");
+      }
+
+      // Open the Google Maps link in a new window
+      setTimeout(() => {
+        const newWindow = window.open(googleMapsLink, "_blank", "noopener,noreferrer");
+        if (newWindow) {
+          newWindow.blur();
+          window.focus();
+        }
+      }, 500);
+    }
+
+    function showMessage(message, type = "info") {
+      const toast = document.createElement("div");
+      toast.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white ${
+        type === "success"
+          ? "bg-green-600"
+          : type === "error"
+          ? "bg-red-600"
+          : type === "warning"
+          ? "bg-yellow-600"
+          : "bg-blue-600"
+      }`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function showError(message) {
+      const reviewDisplay = document.getElementById("reviewDisplay");
+      reviewDisplay.innerHTML = `
+        <div class="text-center py-12">
+          <i data-lucide="alert-circle" class="w-16 h-16 text-red-400 mx-auto mb-4"></i>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Error</h3>
+          <p class="text-gray-500">${message}</p>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    document.addEventListener("DOMContentLoaded", loadBusinessData);
+  </script>
+</body>
+</html>
+
